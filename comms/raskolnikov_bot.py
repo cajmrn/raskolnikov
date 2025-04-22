@@ -4,29 +4,26 @@ from discord.ext import commands
 from data.y_finance_collector import yFinanceCollector
 from datetime import datetime, timedelta
 
-class Raskolnikov(BotCommandsABC):
-    def __init__(self):
-        self.bot = commands.Bot(command_prefix='!', intents=discord.Intents.default())
-
-    @bot.event
-    async def on_read():
-        print(f'logged in as {bot.user.name} (ID: {bot.user.id})')
-
-    @bot.command(name='get_latest_data', help='Fetches latest data for a given ticker')
-    async def get_daily_info(ctx, ticker):
+class Raskolnikov(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+    
+    @commands.command(name='get_latest_data', help='Fetches latest data for a given ticker')
+    async def get_latest_data(self, ctx, ticker):
         try:
             _yf = yFinanceCollector({
                 'advantage_url':'https://www.alphavantage.co/query?function=OVERVIEW&symbol=_ticker}&apikey=_api_key'
                 , 'advantage_key': 'HVT22YLBMRKMN92D'
-             })
+            })
             res = _yf.get_historical_data(ticker)
+            
             if not res:
                 await ctx.send(f"hmmm... I don't have any data for {ticker.upper()}")
                 return
 
             _embed = discord.Embed(
-                title = f'{res.get('SHORT NAME', ticker)} ({ticker.upper()})'
-                color = discord.Color.blue()
+                title = f"{res.get('shortName', ticker)} ({ticker.upper()})"
+                , color = discord.Color.blue()
             )
             # fields
             _embed.add_field(name="Current Price", value=f"${res.get('currentPrice', 'N/A')}")

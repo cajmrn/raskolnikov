@@ -16,7 +16,8 @@ class yFinanceCollector(DataCollectorABC):
         
     def get_historical_data(self, ticker, period='1y'):
         self.stock = yf.Ticker(ticker)
-        return self.stock.history(period=period)
+        #return self.stock.history(period=period)
+        return self.stock.info
     
     def get_fundamentals(sefl, ticker):
         return requests.get(

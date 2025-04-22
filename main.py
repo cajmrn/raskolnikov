@@ -1,4 +1,18 @@
 from data.y_finance_collector import yFinanceCollector
+from comms.raskolnikov_bot import Raskolnikov
+import discord
+from discord.ext import commands
+
+intents = discord.Intents.default()
+intents.message_content = True
+_r = commands.Bot(command_prefix = '!', intents=intents)
+
+@_r.event
+async def on_ready():
+    print(f'logged in as {_r.user.name} (ID: {_r.user.id})')
+
+async def setup_bot():
+    await _r.add_cog(Raskolnikov(_r))
 
 if __name__ == "__main__":
     _yf = yFinanceCollector({
@@ -9,4 +23,6 @@ if __name__ == "__main__":
     res = _yf.get_historical_data('AAPL')
 
     print(res)
-
+    import asyncio
+    asyncio.run(setup_bot())
+    _r.run('') #todo incorporate env loading for key
