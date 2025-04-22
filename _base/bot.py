@@ -13,3 +13,7 @@ class BotCommandsABC(ABC):
     @abstractmethod
     async def set_alert(self, ctx, symbol: str, condition: str, value: float):
         pass
+    
+     @abstractmethod
+    async def get_daily_info(self, ctx, symbol: str):
+        pass
