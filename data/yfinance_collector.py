@@ -14,7 +14,7 @@ class yFinanceCollector(DataCollectorABC):
         self._advantage_key = self._config['advantage_key']
         self._advantage_url = self._config['advantage_url']
         
-    def get_historical_data(self, ticker, period='1y'):
+    def get_info(self, ticker, period='1y'):
         self.stock = yf.Ticker(ticker)
         #return self.stock.history(period=period)
         return self.stock.info

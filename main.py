@@ -1,4 +1,4 @@
-from data.y_finance_collector import yFinanceCollector
+from data.yfinance_collector import yFinanceCollector
 from comms.raskolnikov_bot import Raskolnikov
 import discord
 from discord.ext import commands

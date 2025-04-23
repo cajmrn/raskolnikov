@@ -1,21 +1,21 @@
 from _base.bot import BotCommandsABC
 import discord
 from discord.ext import commands
-from data.y_finance_collector import yFinanceCollector
+from data.yfinance_collector import yFinanceCollector
 from datetime import datetime, timedelta
 
-class Raskolnikov(commands.Cog):
+class RaskolnikovBot(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @commands.command(name='get_latest_data', help='Fetches latest data for a given ticker')
-    async def get_latest_data(self, ctx, ticker):
+    @commands.command(name='get_latest_data', help='Fetches latest data for a given ticker', alias=['info'])
+    async def get_latest_data(self, ctx, ticker, embed):
         try:
             _yf = yFinanceCollector({
                 'advantage_url':'https://www.alphavantage.co/query?function=OVERVIEW&symbol=_ticker}&apikey=_api_key'
                 , 'advantage_key': 'HVT22YLBMRKMN92D'
             })
-            res = _yf.get_historical_data(ticker)
+            res = _yf.get_info(ticker)
             
             if not res:
                 await ctx.send(f"hmmm... I don't have any data for {ticker.upper()}")
