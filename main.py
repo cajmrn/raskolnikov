@@ -16,13 +16,15 @@ async def setup_bot():
 
 if __name__ == "__main__":
     _yf = yFinanceCollector({
-        'advantage_url':'https://www.alphavantage.co/query?function=OVERVIEW&symbol=_ticker}&apikey=_api_key'
+        'advantage_url':'https://www.alphavantage.co/query?function=OVERVIEW&symbol=_ticker&apikey=_api_key'
         , 'advantage_key': 'HVT22YLBMRKMN92D'
     })
 
     res = _yf.get_historical_data('AAPL')
 
-    print(res)
-    import asyncio
-    asyncio.run(setup_bot())
-    _r.run('') #todo incorporate env loading for key
+    fund = _yf.get_fundamentals('AAPL')
+    print(fund)
+    # print(res)
+    # import asyncio
+    # asyncio.run(setup_bot())
+    # _r.run('') #todo incorporate env loading for key
