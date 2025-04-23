@@ -19,9 +19,12 @@ class yFinanceCollector(DataCollectorABC):
         #return self.stock.history(period=period)
         return self.stock.info
     
-    def get_fundamentals(sefl, ticker):
+    def _url(self, ticker):
+        return self._advantage_url.replace('_ticker', ticker).replace('_api_key',self._advantage_key )
+    
+    def get_fundamentals(self, ticker):
         return requests.get(
-                    _advantage_url.replace('_ticker', ticker).replace('_api_key',self._advantage_key )
+                    self._url(ticker)
                     ).json()
     def fetch_daily_data(self, symbol):
         pass
