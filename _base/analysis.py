@@ -1,25 +1,24 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Tuple
 
 class TechnicalAnalyzerABC(ABC):
     @abstractmethod
-    def analyze(self, price_data: Dict) -> Dict[str, float]:
+    def analyze(self, price_data):
         pass
 
 class SentimentAnalyzerABC(ABC):
     @abstractmethod
-    def analyze_text(self, text: str) -> float:
+    def analyze_text(self, text):
         pass
 
     @abstractmethod
-    def analyze_news(self, headlines: List[str]) -> float:
+    def analyze_news(self, headlines):
         pass
 
 class PortfolioAnalyzerABC(ABC):
     @abstractmethod
-    def analyze_position(self, position: Dict, market_data: Dict) -> Dict:
+    def analyze_position(self, position, market_data):
         pass
 
     @abstractmethod
-    def generate_recommendation(self, positions: List[Dict]) -> List[Dict]:
+    def generate_recommendation(self, positions):
         pass

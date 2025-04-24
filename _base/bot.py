@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List
 
 class BotCommandsABC(ABC):
     @abstractmethod
-    async def recommend(self, ctx, strategy_name: str = 'short_term'):
+    async def recommend(self, ctx, strategy_name = 'short_term'):
         pass
 
     @abstractmethod
@@ -11,9 +10,9 @@ class BotCommandsABC(ABC):
         pass
 
     @abstractmethod
-    async def set_alert(self, ctx, symbol: str, condition: str, value: float):
+    async def set_alert(self, ctx, symbol, condition, value):
         pass
     
     @abstractmethod
-    async def get_daily_info(self, ctx, symbol: str):
+    async def get_daily_info(self, ctx, symbol):
         pass

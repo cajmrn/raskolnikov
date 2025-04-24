@@ -1,6 +1,6 @@
 import discord
 
-class EmbedTemplate:
+class EmbedTemplate():
     def __init__(
         self,
         title,
@@ -60,3 +60,18 @@ class EmbedTemplate:
             )
             
         return embed
+    
+    @classmethod
+    def get_yfinance_info(cls, ticker, res):
+        """Factory for stock market embeds."""
+        title = f"{res.get('shortName', ticker)} ({ticker.upper()})"
+        fields = [
+            {'name': 'Current Price', 'value': f"${res.get('currentPrice', 'N/A')}"},
+            {'name': 'Day High', 'value': f"${res.get('dayHigh', 'N/A')}"},
+            {'name': 'Day Low', 'value': f"${res.get('dayLow', 'N/A')}"},
+            {'name': '52 Week High', 'value': f"${res.get('fiftyTwoWeekHigh', 'N/A')}"},
+            {'name': '52 Week Low', 'value': f"${res.get('fiftyTwoWeekLow', 'N/A')}"}
+        ]
+        footer = f"Data from Yahoo Finance • {res.get('exchange', 'Unknown Exchange')}"
+        return cls(title=title, fields=fields, footer=footer)
+
