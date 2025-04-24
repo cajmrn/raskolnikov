@@ -3,13 +3,17 @@ import discord
 from discord.ext import commands
 from data.yfinance_collector import yFinanceCollector
 from datetime import datetime, timedelta
+from strategies import StrategyFactory
+from strategies.backtest_runner import BacktraderAdapter
+from strategies.backtrader.backtrader_strategy import BacktraderSMACrossStrategy
+
 
 class RaskolnikovBot(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
     @commands.command(name='get_latest_data', help='Fetches latest data for a given ticker', alias=['info'])
-    async def get_latest_data(self, ctx, ticker, embed):
+    async def get_latest_data(self, ctx, ticker, embed=None):
         try:
             _yf = yFinanceCollector({
                 'advantage_url':'https://www.alphavantage.co/query?function=OVERVIEW&symbol=_ticker}&apikey=_api_key'
@@ -34,6 +38,44 @@ class RaskolnikovBot(commands.Cog):
             
             # additional info
             _embed.set_footer(text=f"Data from Yahoo Finance • {res.get('exchange', 'Unknown Exchange')}")
+            
+            await ctx.send(embed=_embed)
+        except Exception as e:
+            await ctx.send(f"Error fetching data: {str(e)}")
+
+    @commands.command(name='sim_smacross', help='takes initial cash and sims with smacross', alias=['sma'])
+    async def sim_smacross(self, ctx, ticker, initial_cash, embed=None):
+        try:
+            _yf = yFinanceCollector()
+            _df = _yf.download(ticker)
+
+            factory = StrategyFactory()
+            smacross = factory.create_strategy('smacross', None)
+            _initial_cash = initial_cash
+            print(_initial_cash)
+            cerebro, results =  BacktraderAdapter.run_backtest(
+                symbol = ticker
+                , signal_strategy = smacross
+                , bt_strategy = BacktraderSMACrossStrategy
+                , ohlc_data = _df
+                , initial_cash = float(_initial_cash)
+            )
+            print(cerebro)
+            print(results)
+            if not results and cerebro:
+                await ctx.send(f"hmmm... something went wrong {ticker.upper()}")
+                return
+
+            _embed = discord.Embed(
+                title = f"SIMMED: {ticker.upper()}"
+                , color = discord.Color.blue()
+            )
+            # fields
+            _embed.add_field(name="INITIAL CASH:", value=f"${_initial_cash}")
+            _embed.add_field(name="CLOSING VALUE:", value=f"${cerebro.broker.getvalue()}")
+            
+            # additional info
+            _embed.set_footer(text=f"Raskolnikov says: Not finiancical advice")
             
             await ctx.send(embed=_embed)
         except Exception as e:
