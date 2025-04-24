@@ -16,7 +16,7 @@ async def on_ready():
     print(f'logged in as {_r.user.name} (ID: {_r.user.id})')
 
 async def setup_bot():
-    await _r.add_cog(RaskolnikovBot(_r))
+    await _r.add_cog(Raskolnikov(_r))
 
 if __name__ == "__main__":
     # _yf = yFinanceCollector()

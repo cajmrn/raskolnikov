@@ -52,16 +52,14 @@ class RaskolnikovBot(commands.Cog):
             factory = StrategyFactory()
             smacross = factory.create_strategy('smacross', None)
             _initial_cash = initial_cash
-            print(_initial_cash)
             cerebro, results =  BacktraderAdapter.run_backtest(
                 symbol = ticker
                 , signal_strategy = smacross
                 , bt_strategy = BacktraderSMACrossStrategy
                 , ohlc_data = _df
-                , initial_cash = float(_initial_cash)
+                , initial_cash = _initial_cash
             )
-            print(cerebro)
-            print(results)
+
             if not results and cerebro:
                 await ctx.send(f"hmmm... something went wrong {ticker.upper()}")
                 return
@@ -71,8 +69,8 @@ class RaskolnikovBot(commands.Cog):
                 , color = discord.Color.blue()
             )
             # fields
-            _embed.add_field(name="INITIAL CASH:", value=f"${_initial_cash}")
-            _embed.add_field(name="CLOSING VALUE:", value=f"${cerebro.broker.getvalue()}")
+            _embed.add_field(name="INITIAL CASH", value=f"${_initial_cash}")
+            _embed.add_field(name="Day High", value=f"${cerebro.broker.getvalue()}")
             
             # additional info
             _embed.set_footer(text=f"Raskolnikov says: Not finiancical advice")
