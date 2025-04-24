@@ -6,7 +6,8 @@ from datetime import datetime, timedelta
 from strategies import StrategyFactory
 from strategies.backtest_runner import BacktraderAdapter
 from strategies.backtrader.backtrader_strategy import BacktraderSMACrossStrategy
-
+import io
+import matplotlib.pyplot as plt
 
 class RaskolnikovBot(commands.Cog):
     def __init__(self, bot):
@@ -64,17 +65,29 @@ class RaskolnikovBot(commands.Cog):
                 await ctx.send(f"hmmm... something went wrong {ticker.upper()}")
                 return
 
+            plt_res = cerebro.plot()
+            fig = plt_res[0][0]
+
+            buffer = io.BytesIO()
+            fig.savefig(buffer, format='png', dpi=300, bbox_inches='tight')
+            buffer.seek(0)
+
             _embed = discord.Embed(
                 title = f"SIMMED: {ticker.upper()}"
                 , color = discord.Color.blue()
             )
             # fields
+            file = discord.File(buffer, filename="backtest_plot.png")
+
             _embed.add_field(name="INITIAL CASH", value=f"${_initial_cash}")
             _embed.add_field(name="Day High", value=f"${cerebro.broker.getvalue()}")
-            
+            _embed.set_image(url='attachment://backtest_plot.png')
             # additional info
             _embed.set_footer(text=f"Raskolnikov says: Not finiancical advice")
             
             await ctx.send(embed=_embed)
+            buffer.close()
+            plt.close(fig)
+
         except Exception as e:
             await ctx.send(f"Error fetching data: {str(e)}")
