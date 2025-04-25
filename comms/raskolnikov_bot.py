@@ -13,14 +13,13 @@ class RaskolnikovBot(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @commands.command(name='get_latest_data', help='Fetches latest data for a given ticker', alias=['info'])
+    @commands.command(name='get_latest_data', help='Fetches latest data for a given ticker', aliases=['info'])
     async def get_latest_data(self, ctx, ticker, embed=None):
         try:
-            _yf = yFinanceCollector({
-                'advantage_url':'https://www.alphavantage.co/query?function=OVERVIEW&symbol=_ticker}&apikey=_api_key'
-                , 'advantage_key': 'HVT22YLBMRKMN92D'
-            })
-            res = _yf.get_info(ticker)
+            # todo refactor Collector 
+            _yf = yFinanceCollector()
+            res = _yf.set_stock(ticker)
+            info = res.get_info()
             
             if not res:
                 await ctx.send(f"hmmm... I don't have any data for {ticker.upper()}")
@@ -44,7 +43,7 @@ class RaskolnikovBot(commands.Cog):
         except Exception as e:
             await ctx.send(f"Error fetching data: {str(e)}")
 
-    @commands.command(name='sim_smacross', help='takes initial cash and sims with smacross', alias=['sma'])
+    @commands.command(name='sim_smacross', help='takes initial cash and sims with smacross', aliases=['sma'])
     async def sim_smacross(self, ctx, ticker, initial_cash, embed=None):
         try:
             _yf = yFinanceCollector()
@@ -91,3 +90,33 @@ class RaskolnikovBot(commands.Cog):
 
         except Exception as e:
             await ctx.send(f"Error fetching data: {str(e)}")
+
+    @commands.command(name='value', help='takes initial cash and sims with smacross', aliases=['sma'])
+    async def value_stock(self, ctx, ticker, embed=None):
+        try:
+            _yf = yFinanceCollector()
+            _df = _yf.get_history(ticker)
+
+
+        except Exception as e:
+            await ctx.send(f"Error analyzing {ticker.upper()}: {str(e)}")
+
+
+    @commands.command(name='release_notes', help='release notes', aliases=['release'])
+    async def release_notes(self, ctx, ticker, embed=None):
+        try:
+            _embed = discord.Embed(
+                title = f"Raskolikov_v0.003"
+                , color = discord.Color.blue()
+            )
+
+            _embed.add_field(name="2025-04-21", value=f" - Birth")
+            _embed.add_field(name="2025-04-22", value=f" - Discord integration")
+            _embed.add_field(name="2025-04-23", value=f" - get_latest_data functionality")
+            _embed.add_field(name="2025-04-24", value=f" - smscross functionality")
+
+            # additional info
+            _embed.set_footer(text=f"Raskolnikov says: Not finiancical advice")
+
+        except Exception as e:
+            await ctx.send(f"Error analyzing {ticker.upper()}: {str(e)}")

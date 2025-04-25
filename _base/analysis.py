@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 
 class TechnicalAnalyzerABC(ABC):
+    def __init__(self, collector):
+        self._collector = collector
+        
     @abstractmethod
     def analyze(self, price_data):
         pass
