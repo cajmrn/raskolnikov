@@ -1,13 +1,16 @@
-from _base.bot import BotCommandsABC
 import discord
-from discord.ext import commands
-from data.yfinance_collector import yFinanceCollector
-from datetime import datetime, timedelta
-from strategies import StrategyFactory
-from strategies.backtest_runner import BacktraderAdapter
-from strategies.backtrader.backtrader_strategy import BacktraderSMACrossStrategy
 import io
 import matplotlib.pyplot as plt
+
+from discord.ext import commands
+from _base.bot import BotCommandsABC
+from strategies import StrategyFactory
+from datetime import datetime, timedelta
+from analysis.valuator import TechnicalValuator
+from ext_discord.discord_embed import EmbedTemplate
+from data.yfinance_collector import yFinanceCollector
+from strategies.backtest_runner import BacktraderAdapter
+from strategies.backtrader.backtrader_strategy import BacktraderSMACrossStrategy
 
 class RaskolnikovBot(commands.Cog):
     def __init__(self, bot):
@@ -91,13 +94,15 @@ class RaskolnikovBot(commands.Cog):
         except Exception as e:
             await ctx.send(f"Error fetching data: {str(e)}")
 
-    @commands.command(name='value', help='takes initial cash and sims with smacross', aliases=['sma'])
-    async def value_stock(self, ctx, ticker, embed=None):
+    @commands.command(name='valuation', help='valuates the Stock as valued or undervalued', aliases=['value'])
+    async def valuation(self, ctx, ticker, embed=None):
         try:
-            _yf = yFinanceCollector()
-            _df = _yf.get_history(ticker)
+            _tv = TechnicalValuator(yFinanceCollector(), ticker)
+            _a = _tv.analyze()
 
-
+            _et = EmbedTemplate.get_valuation_info(ticker=ticker, data=_a)
+            
+            await ctx.send(embed=_et.create_embed())
         except Exception as e:
             await ctx.send(f"Error analyzing {ticker.upper()}: {str(e)}")
 
@@ -106,7 +111,7 @@ class RaskolnikovBot(commands.Cog):
     async def release_notes(self, ctx, ticker, embed=None):
         try:
             _embed = discord.Embed(
-                title = f"Raskolikov_v0.003"
+                title = f"Raskolikov_v0.005"
                 , color = discord.Color.blue()
             )
 
@@ -114,9 +119,12 @@ class RaskolnikovBot(commands.Cog):
             _embed.add_field(name="2025-04-22", value=f" - Discord integration")
             _embed.add_field(name="2025-04-23", value=f" - get_latest_data functionality")
             _embed.add_field(name="2025-04-24", value=f" - smscross functionality")
+            _embed.add_field(name="2025-05-01", value=f" - valuation functionality")
 
             # additional info
             _embed.set_footer(text=f"Raskolnikov says: Not finiancical advice")
 
         except Exception as e:
             await ctx.send(f"Error analyzing {ticker.upper()}: {str(e)}")
+    
+    

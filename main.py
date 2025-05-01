@@ -29,10 +29,8 @@ if __name__ == "__main__":
     #print(yf.mean_cashflow())
 
     _tv = TechnicalValuator(yFinanceCollector(), 'AAPL')
-
     _a = _tv.analyze()
 
-    print(_a)
     _et = EmbedTemplate.get_valuation_info(ticker = 'AAPL', data = _a)
     _et.create_embed()
 
