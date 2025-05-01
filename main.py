@@ -3,6 +3,7 @@ from strategies import StrategyFactory
 from strategies.backtest_runner import BacktraderAdapter
 from strategies.backtrader.backtrader_strategy import BacktraderSMACrossStrategy
 from analysis.valuator import TechnicalValuator
+from ext_discord.discord_embed import EmbedTemplate
 
 from comms.raskolnikov_bot import RaskolnikovBot
 import discord
@@ -32,6 +33,12 @@ if __name__ == "__main__":
     _a = _tv.analyze()
 
     print(_a)
+    _et = EmbedTemplate.get_valuation_info(ticker = 'AAPL', data = _a)
+    _et.create_embed()
+
+    print(_et)
+
+
     
     # # res = _yf.get_info('AAPL')
     # print(res)

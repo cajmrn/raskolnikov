@@ -75,3 +75,36 @@ class EmbedTemplate():
         footer = f"Data from Yahoo Finance • {res.get('exchange', 'Unknown Exchange')}"
         return cls(title=title, fields=fields, footer=footer)
 
+    @classmethod
+    def get_valuation_info(cls, ticker, data):
+        """Factory for valuation analysis embeds (text-only version)."""
+        color = discord.Color.dark_green() if data['is_undervalued'] else discord.Color.dark_red()
+        title = f"Valuation Analysis - Score: {data['total_score']}"
+        
+        fields = []
+        for metric_name, metric_data in data['metrics'].items():
+            value = metric_data['value'].item() if hasattr(metric_data['value'], 'item') else metric_data['value']
+            threshold = metric_data['threshold'].item() if hasattr(metric_data.get('threshold'), 'item') else metric_data.get('threshold')
+            
+            formatted_value = f"{value:,.2f}" if isinstance(value, (int, float)) else str(value)
+            
+            status = "PASS" if metric_data['meets_criteria'] else "FAIL"
+            
+            fields.append({
+                'name': metric_name.upper(),
+                'value': (
+                    f"Value: {formatted_value}\n"
+                    f"Threshold: {threshold if threshold is not None else 'N/A'}\n"
+                    f"Score: {metric_data['score']}/1\n"
+                    f"Status: {status}"
+                ),
+                'inline': True
+            })
+        
+        footer = "UNDERVALUED" if data['is_undervalued'] else "FAIRLY VALUED"
+        
+        return cls(
+            title=title,
+            color=color,
+            fields=fields,
+            footer=footer)
